@@ -3,6 +3,7 @@ const menuToggle = document.querySelector(".menu-toggle");
 const menuPanel = document.querySelector(".menu-panel");
 const carousel = document.querySelector(".services-carousel");
 const carouselButtons = document.querySelectorAll("[data-carousel]");
+const sliderDots = document.querySelectorAll(".slider-dot");
 const flowSteps = document.querySelectorAll(".flow-step");
 const flowDetail = document.querySelector(".flow-detail");
 const contactForm = document.querySelector(".contact-form");
@@ -37,17 +38,68 @@ menuPanel.addEventListener("click", (event) => {
   }
 });
 
+function getSlideDistance() {
+  const firstCard = carousel.querySelector(".service-card");
+  const gap = Number.parseFloat(getComputedStyle(carousel).columnGap) || 0;
+  return firstCard.getBoundingClientRect().width + gap;
+}
+
+function getSlides() {
+  return [...carousel.querySelectorAll(".service-card")];
+}
+
+function getActiveSlideIndex() {
+  const slides = getSlides();
+  return slides.reduce((closestIndex, slide, index) => {
+    const closestDistance = Math.abs(slides[closestIndex].offsetLeft - carousel.scrollLeft);
+    const currentDistance = Math.abs(slide.offsetLeft - carousel.scrollLeft);
+    return currentDistance < closestDistance ? index : closestIndex;
+  }, 0);
+}
+
+function updateSliderDots() {
+  const activeIndex = Math.max(0, Math.min(sliderDots.length - 1, getActiveSlideIndex()));
+  sliderDots.forEach((dot, index) => {
+    const isActive = index === activeIndex;
+    dot.classList.toggle("is-active", isActive);
+    if (isActive) {
+      dot.setAttribute("aria-current", "true");
+    } else {
+      dot.removeAttribute("aria-current");
+    }
+  });
+}
+
+function scrollToSlide(index) {
+  const slides = getSlides();
+  const targetSlide = slides[index];
+  if (!targetSlide) return;
+
+  carousel.scrollTo({
+    left: targetSlide.offsetLeft,
+    behavior: "smooth",
+  });
+}
+
 carouselButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const direction = button.dataset.carousel === "next" ? 1 : -1;
-    const firstCard = carousel.querySelector(".service-card");
-    const cardWidth = firstCard.getBoundingClientRect().width;
-    carousel.scrollBy({
-      left: direction * (cardWidth + 16),
-      behavior: "smooth",
-    });
+    const targetIndex = getActiveSlideIndex() + direction;
+    scrollToSlide(Math.max(0, Math.min(sliderDots.length - 1, targetIndex)));
   });
 });
+
+sliderDots.forEach((dot) => {
+  dot.addEventListener("click", () => {
+    scrollToSlide(Number(dot.dataset.slide));
+  });
+});
+
+carousel.addEventListener("scroll", () => {
+  window.requestAnimationFrame(updateSliderDots);
+});
+
+window.addEventListener("resize", updateSliderDots);
 
 function activateStep(step) {
   flowSteps.forEach((item) => {
