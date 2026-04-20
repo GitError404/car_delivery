@@ -1,6 +1,7 @@
 const cornerMenu = document.querySelector(".corner-menu");
 const menuToggle = document.querySelector(".menu-toggle");
 const menuPanel = document.querySelector(".menu-panel");
+const avatarPerson = document.querySelector(".avatar-person");
 const carousel = document.querySelector(".services-carousel");
 const carouselButtons = document.querySelectorAll("[data-carousel]");
 const sliderDots = document.querySelectorAll(".slider-dot");
@@ -8,6 +9,46 @@ const flowSteps = document.querySelectorAll(".flow-step");
 const flowDetail = document.querySelector(".flow-detail");
 const contactForm = document.querySelector(".contact-form");
 const formStatus = document.querySelector(".form-status");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const avatarStates = {
+  default: "assets/avatar/avatar-default.png",
+  smile: "assets/avatar/avatar-smile.png",
+  wave: "assets/avatar/avatar-wave.png",
+  thumbsUp: "assets/avatar/avatar-thumbs-up.png",
+  ok: "assets/avatar/avatar-ok.png",
+};
+
+let avatarTimer;
+
+Object.values(avatarStates).forEach((src) => {
+  const image = new Image();
+  image.src = src;
+});
+
+function setAvatarState(state, duration = 1800) {
+  const nextSrc = avatarStates[state] || avatarStates.default;
+  window.clearTimeout(avatarTimer);
+
+  avatarPerson.classList.remove("is-emoting", "is-waving");
+  avatarPerson.classList.add("is-changing");
+
+  window.setTimeout(() => {
+    avatarPerson.src = nextSrc;
+    avatarPerson.dataset.state = state;
+    avatarPerson.classList.remove("is-changing");
+
+    if (!prefersReducedMotion && state !== "default") {
+      avatarPerson.classList.add(state === "wave" ? "is-waving" : "is-emoting");
+    }
+  }, 130);
+
+  if (state !== "default" && duration > 0) {
+    avatarTimer = window.setTimeout(() => {
+      setAvatarState("default", 0);
+    }, duration);
+  }
+}
 
 function closeMenu() {
   cornerMenu.classList.remove("is-open");
@@ -17,6 +58,7 @@ function closeMenu() {
 menuToggle.addEventListener("click", () => {
   const isOpen = cornerMenu.classList.toggle("is-open");
   menuToggle.setAttribute("aria-expanded", String(isOpen));
+  setAvatarState(isOpen ? "smile" : "default", isOpen ? 1400 : 0);
 });
 
 document.addEventListener("click", (event) => {
@@ -86,12 +128,14 @@ carouselButtons.forEach((button) => {
     const direction = button.dataset.carousel === "next" ? 1 : -1;
     const targetIndex = getActiveSlideIndex() + direction;
     scrollToSlide(Math.max(0, Math.min(sliderDots.length - 1, targetIndex)));
+    setAvatarState("ok", 1300);
   });
 });
 
 sliderDots.forEach((dot) => {
   dot.addEventListener("click", () => {
     scrollToSlide(Number(dot.dataset.slide));
+    setAvatarState("smile", 1300);
   });
 });
 
@@ -117,9 +161,45 @@ function activateStep(step) {
 }
 
 flowSteps.forEach((step) => {
-  step.addEventListener("click", () => activateStep(step));
+  step.addEventListener("click", () => {
+    activateStep(step);
+    setAvatarState("ok", 1400);
+  });
   step.addEventListener("mouseenter", () => activateStep(step));
-  step.addEventListener("focus", () => activateStep(step));
+  step.addEventListener("focus", () => {
+    activateStep(step);
+    setAvatarState("smile", 1200);
+  });
+});
+
+document.querySelectorAll(".hero-actions a, .messenger-links a, .sticky-cta").forEach((link) => {
+  link.addEventListener("click", () => {
+    setAvatarState(link.matches(".messenger-links a") ? "thumbsUp" : "wave", 1700);
+  });
+});
+
+const reactedSections = new Set();
+const sectionAvatarStates = {
+  services: "wave",
+  process: "ok",
+  options: "smile",
+  contact: "thumbsUp",
+};
+
+const sectionObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting || reactedSections.has(entry.target.id)) return;
+      reactedSections.add(entry.target.id);
+      setAvatarState(sectionAvatarStates[entry.target.id], 1500);
+    });
+  },
+  { threshold: 0.42 }
+);
+
+Object.keys(sectionAvatarStates).forEach((id) => {
+  const section = document.getElementById(id);
+  if (section) sectionObserver.observe(section);
 });
 
 contactForm.addEventListener("submit", (event) => {
@@ -129,5 +209,6 @@ contactForm.addEventListener("submit", (event) => {
   formStatus.textContent = name
     ? `Дякуємо, ${name}. Скоро зв'яжемося з вами.`
     : "Дякуємо. Скоро зв'яжемося з вами.";
+  setAvatarState("thumbsUp", 3200);
   contactForm.reset();
 });

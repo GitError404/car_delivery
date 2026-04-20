@@ -112,6 +112,9 @@ textarea {
 }
 
 .avatar-scene {
+  display: grid;
+  aspect-ratio: 16 / 9;
+  align-items: end;
   overflow: hidden;
   border-radius: var(--radius);
   background:
@@ -119,14 +122,31 @@ textarea {
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 13px);
 }
 
-.avatar-scene svg {
+.avatar-person {
   width: 100%;
-  transform: translateY(4px);
-  transition: transform 0.28s ease;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  transform: translateY(0) scale(1.02);
+  transform-origin: 50% 20%;
+  transition: opacity 0.22s ease, transform 0.28s ease;
 }
 
-.avatar-block:hover .avatar-scene svg {
-  transform: translateY(0) scale(1.02);
+.avatar-block:hover .avatar-person {
+  transform: translateY(-1px) scale(1.04);
+}
+
+.avatar-person.is-changing {
+  opacity: 0.25;
+  transform: translateY(4px) scale(0.99);
+}
+
+.avatar-person.is-emoting {
+  animation: avatar-pop 0.5s ease;
+}
+
+.avatar-person.is-waving {
+  animation: avatar-wave 0.65s ease-in-out 2;
 }
 
 .avatar-copy {
@@ -799,6 +819,32 @@ p {
   }
 }
 
+@keyframes avatar-pop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1.02);
+  }
+
+  45% {
+    transform: translateY(-4px) scale(1.06);
+  }
+}
+
+@keyframes avatar-wave {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg) scale(1.02);
+  }
+
+  25% {
+    transform: translateX(-2px) rotate(-1.5deg) scale(1.03);
+  }
+
+  70% {
+    transform: translateX(2px) rotate(1.5deg) scale(1.03);
+  }
+}
+
 @media (max-width: 980px) {
   h1 {
     font-size: 5.1rem;
@@ -924,8 +970,8 @@ p {
     padding: 0.45rem;
   }
 
-  .avatar-scene svg {
-    transform: translateY(2px);
+  .avatar-person {
+    transform: translateY(0) scale(1.02);
   }
 
   .avatar-copy span {
