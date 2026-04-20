@@ -20,6 +20,8 @@ const avatarStates = {
 };
 
 let avatarTimer;
+let firstInteractionHandled = false;
+let processInteractionHandled = false;
 
 Object.values(avatarStates).forEach((src) => {
   const image = new Image();
@@ -30,7 +32,7 @@ function setAvatarState(state, duration = 1800) {
   const nextSrc = avatarStates[state] || avatarStates.default;
   window.clearTimeout(avatarTimer);
 
-  avatarPerson.classList.remove("is-emoting", "is-waving");
+  avatarPerson.classList.remove("is-emoting", "is-waving", "is-nodding");
   avatarPerson.classList.add("is-changing");
 
   window.setTimeout(() => {
@@ -50,6 +52,46 @@ function setAvatarState(state, duration = 1800) {
   }
 }
 
+function nodAvatarOnce() {
+  if (firstInteractionHandled) return;
+  firstInteractionHandled = true;
+  window.clearTimeout(avatarTimer);
+  avatarPerson.src = avatarStates.default;
+  avatarPerson.dataset.state = "default";
+  avatarPerson.classList.remove("is-changing", "is-emoting", "is-waving", "is-nodding");
+
+  if (!prefersReducedMotion) {
+    window.requestAnimationFrame(() => {
+      avatarPerson.classList.add("is-nodding");
+    });
+  }
+}
+
+avatarPerson.addEventListener("animationend", () => {
+  avatarPerson.classList.remove("is-emoting", "is-waving", "is-nodding");
+});
+
+window.addEventListener("load", () => {
+  setAvatarState("wave", 2200);
+});
+
+document.addEventListener(
+  "pointerdown",
+  (event) => {
+    if (event.target.closest("button, a, input, textarea, .services-carousel, .flow-step")) {
+      nodAvatarOnce();
+    }
+  },
+  { capture: true }
+);
+
+document.addEventListener("keydown", (event) => {
+  if (!["Enter", " "].includes(event.key)) return;
+  if (document.activeElement.closest("button, a, input, textarea, .services-carousel, .flow-step")) {
+    nodAvatarOnce();
+  }
+});
+
 function closeMenu() {
   cornerMenu.classList.remove("is-open");
   menuToggle.setAttribute("aria-expanded", "false");
@@ -58,7 +100,6 @@ function closeMenu() {
 menuToggle.addEventListener("click", () => {
   const isOpen = cornerMenu.classList.toggle("is-open");
   menuToggle.setAttribute("aria-expanded", String(isOpen));
-  setAvatarState(isOpen ? "smile" : "default", isOpen ? 1400 : 0);
 });
 
 document.addEventListener("click", (event) => {
@@ -79,12 +120,6 @@ menuPanel.addEventListener("click", (event) => {
     closeMenu();
   }
 });
-
-function getSlideDistance() {
-  const firstCard = carousel.querySelector(".service-card");
-  const gap = Number.parseFloat(getComputedStyle(carousel).columnGap) || 0;
-  return firstCard.getBoundingClientRect().width + gap;
-}
 
 function getSlides() {
   return [...carousel.querySelectorAll(".service-card")];
@@ -128,14 +163,12 @@ carouselButtons.forEach((button) => {
     const direction = button.dataset.carousel === "next" ? 1 : -1;
     const targetIndex = getActiveSlideIndex() + direction;
     scrollToSlide(Math.max(0, Math.min(sliderDots.length - 1, targetIndex)));
-    setAvatarState("ok", 1300);
   });
 });
 
 sliderDots.forEach((dot) => {
   dot.addEventListener("click", () => {
     scrollToSlide(Number(dot.dataset.slide));
-    setAvatarState("smile", 1300);
   });
 });
 
@@ -160,46 +193,22 @@ function activateStep(step) {
   }, 120);
 }
 
+function smileOnFirstProcessInteraction() {
+  if (processInteractionHandled) return;
+  processInteractionHandled = true;
+  window.setTimeout(() => setAvatarState("smile", 1800), firstInteractionHandled ? 0 : 900);
+}
+
 flowSteps.forEach((step) => {
   step.addEventListener("click", () => {
     activateStep(step);
-    setAvatarState("ok", 1400);
+    smileOnFirstProcessInteraction();
   });
   step.addEventListener("mouseenter", () => activateStep(step));
   step.addEventListener("focus", () => {
     activateStep(step);
-    setAvatarState("smile", 1200);
+    smileOnFirstProcessInteraction();
   });
-});
-
-document.querySelectorAll(".hero-actions a, .messenger-links a, .sticky-cta").forEach((link) => {
-  link.addEventListener("click", () => {
-    setAvatarState(link.matches(".messenger-links a") ? "thumbsUp" : "wave", 1700);
-  });
-});
-
-const reactedSections = new Set();
-const sectionAvatarStates = {
-  services: "wave",
-  process: "ok",
-  options: "smile",
-  contact: "thumbsUp",
-};
-
-const sectionObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting || reactedSections.has(entry.target.id)) return;
-      reactedSections.add(entry.target.id);
-      setAvatarState(sectionAvatarStates[entry.target.id], 1500);
-    });
-  },
-  { threshold: 0.42 }
-);
-
-Object.keys(sectionAvatarStates).forEach((id) => {
-  const section = document.getElementById(id);
-  if (section) sectionObserver.observe(section);
 });
 
 contactForm.addEventListener("submit", (event) => {
@@ -209,6 +218,6 @@ contactForm.addEventListener("submit", (event) => {
   formStatus.textContent = name
     ? `Дякуємо, ${name}. Скоро зв'яжемося з вами.`
     : "Дякуємо. Скоро зв'яжемося з вами.";
-  setAvatarState("thumbsUp", 3200);
+  setAvatarState("ok", 3200);
   contactForm.reset();
 });
