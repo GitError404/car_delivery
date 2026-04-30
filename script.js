@@ -11,68 +11,113 @@ const contactForm = document.querySelector(".contact-form");
 const formStatus = document.querySelector(".form-status");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const avatarStates = {
-  default: "assets/avatar/avatar-default.png",
-  smile: "assets/avatar/avatar-smile.png",
-  wave: "assets/avatar/avatar-wave.png",
-  thumbsUp: "assets/avatar/avatar-thumbs-up.png",
-  ok: "assets/avatar/avatar-ok.png",
+const spriteColumns = 5;
+const spriteRows = 4;
+
+const avatarFrames = {
+  default: [0, 0],
+  smile: [1, 2],
+  nod: [2, 0],
+  ok: [3, 3],
 };
 
-let avatarTimer;
+const avatarSequences = {
+  wave: [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [0, 4],
+    [0, 3],
+    [0, 4],
+    [0, 2],
+    [0, 1],
+    [0, 0],
+  ],
+  smile: [
+    [1, 0],
+    [1, 1],
+    [1, 2],
+    [1, 3],
+    [1, 4],
+  ],
+  nod: [
+    [2, 0],
+    [2, 1],
+    [2, 2],
+    [2, 3],
+    [2, 4],
+  ],
+  ok: [
+    [3, 0],
+    [3, 1],
+    [3, 2],
+    [3, 3],
+    [3, 4],
+  ],
+};
+
+let avatarSequenceTimer;
 let firstInteractionHandled = false;
 let processInteractionHandled = false;
 
-Object.values(avatarStates).forEach((src) => {
-  const image = new Image();
-  image.src = src;
-});
+function setAvatarFrame(row, column) {
+  const x = column * (100 / (spriteColumns - 1));
+  const y = row * (100 / (spriteRows - 1));
+  avatarPerson.style.backgroundPosition = `${x}% ${y}%`;
+}
 
-function setAvatarState(state, duration = 1800) {
-  const nextSrc = avatarStates[state] || avatarStates.default;
-  window.clearTimeout(avatarTimer);
+function stopAvatarSequence() {
+  window.clearTimeout(avatarSequenceTimer);
+}
 
-  avatarPerson.classList.remove("is-emoting", "is-waving", "is-nodding");
-  avatarPerson.classList.add("is-changing");
+function setAvatarState(state) {
+  stopAvatarSequence();
+  const [row, column] = avatarFrames[state] || avatarFrames.default;
+  setAvatarFrame(row, column);
+  avatarPerson.dataset.state = state;
+}
 
-  window.setTimeout(() => {
-    avatarPerson.src = nextSrc;
-    avatarPerson.dataset.state = state;
-    avatarPerson.classList.remove("is-changing");
-
-    if (!prefersReducedMotion && state !== "default") {
-      avatarPerson.classList.add(state === "wave" ? "is-waving" : "is-emoting");
-    }
-  }, 130);
-
-  if (state !== "default" && duration > 0) {
-    avatarTimer = window.setTimeout(() => {
-      setAvatarState("default", 0);
-    }, duration);
+function playAvatarSequence(name, frameDuration = 150) {
+  const frames = avatarSequences[name];
+  if (!frames || !frames.length) {
+    setAvatarState(name);
+    return;
   }
+
+  stopAvatarSequence();
+  avatarPerson.classList.remove("is-changing", "is-emoting", "is-waving", "is-nodding");
+
+  if (prefersReducedMotion) {
+    setAvatarState("default");
+    return;
+  }
+
+  let frameIndex = 0;
+  const nextFrame = () => {
+    const [row, column] = frames[frameIndex];
+    setAvatarFrame(row, column);
+    avatarPerson.dataset.state = name;
+    frameIndex += 1;
+
+    if (frameIndex < frames.length) {
+      avatarSequenceTimer = window.setTimeout(nextFrame, frameDuration);
+    } else {
+      avatarPerson.dataset.state = "default";
+    }
+  };
+
+  nextFrame();
 }
 
 function nodAvatarOnce() {
   if (firstInteractionHandled) return;
   firstInteractionHandled = true;
-  window.clearTimeout(avatarTimer);
-  avatarPerson.src = avatarStates.default;
-  avatarPerson.dataset.state = "default";
-  avatarPerson.classList.remove("is-changing", "is-emoting", "is-waving", "is-nodding");
-
-  if (!prefersReducedMotion) {
-    window.requestAnimationFrame(() => {
-      avatarPerson.classList.add("is-nodding");
-    });
-  }
+  playAvatarSequence("nod", 140);
 }
 
-avatarPerson.addEventListener("animationend", () => {
-  avatarPerson.classList.remove("is-emoting", "is-waving", "is-nodding");
-});
-
 window.addEventListener("load", () => {
-  setAvatarState("wave", 2200);
+  playAvatarSequence("wave", 120);
 });
 
 document.addEventListener(
@@ -196,7 +241,7 @@ function activateStep(step) {
 function smileOnFirstProcessInteraction() {
   if (processInteractionHandled) return;
   processInteractionHandled = true;
-  window.setTimeout(() => setAvatarState("smile", 1800), firstInteractionHandled ? 0 : 900);
+  window.setTimeout(() => playAvatarSequence("smile", 150), firstInteractionHandled ? 0 : 900);
 }
 
 flowSteps.forEach((step) => {
@@ -218,6 +263,6 @@ contactForm.addEventListener("submit", (event) => {
   formStatus.textContent = name
     ? `Дякуємо, ${name}. Скоро зв'яжемося з вами.`
     : "Дякуємо. Скоро зв'яжемося з вами.";
-  setAvatarState("ok", 3200);
+  playAvatarSequence("ok", 160);
   contactForm.reset();
 });
