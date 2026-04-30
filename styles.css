@@ -615,11 +615,11 @@ p {
 
 .flow-progress-finish {
   position: absolute;
-  top: 0.12rem;
+  top: -1.15rem;
   right: -0.05rem;
   width: 2.15rem;
   height: 3rem;
-  background: url("assets/finish-flag.png") center / contain no-repeat;
+  background: url("assets/finish-flag-clean.png") center / contain no-repeat;
   filter: drop-shadow(-8px 8px 12px rgba(32, 35, 39, 0.12));
 }
 
