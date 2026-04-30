@@ -7,6 +7,7 @@ const carouselButtons = document.querySelectorAll("[data-carousel]");
 const sliderDots = document.querySelectorAll(".slider-dot");
 const flowSteps = document.querySelectorAll(".flow-step");
 const flowDetail = document.querySelector(".flow-detail");
+const flowProgress = document.querySelector(".flow-progress");
 const contactForm = document.querySelector(".contact-form");
 const formStatus = document.querySelector(".form-status");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -229,6 +230,10 @@ function activateStep(step) {
     item.classList.toggle("is-active", isActive);
     item.setAttribute("aria-pressed", String(isActive));
   });
+
+  if (flowProgress) {
+    flowProgress.style.setProperty("--track-progress", step.dataset.stepProgress || "14%");
+  }
 
   flowDetail.classList.add("is-changing");
   window.setTimeout(() => {

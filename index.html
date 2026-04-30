@@ -118,63 +118,78 @@
 
       <section class="section-block process-section" id="process" aria-labelledby="process-title">
         <div class="section-inner">
-          <p class="eyebrow">Зрозуміло з першого кроку</p>
+          <p class="eyebrow">Прозоро на кожному етапі</p>
           <h2 id="process-title">Простий процес без зайвих невідомих.</h2>
+          <p class="process-intro">
+            Одна зрозуміла логіка для будь-якої послуги: від першого запиту до узгодженого старту роботи.
+          </p>
           <div class="service-flow process-flow" aria-label="Інтерактивні кроки процесу">
+            <div class="flow-progress" aria-hidden="true" style="--track-progress: 14%;">
+              <span class="flow-progress-label flow-progress-label-start">Старт</span>
+              <span class="flow-progress-road">
+                <span class="flow-progress-car"></span>
+                <span class="flow-progress-finish"></span>
+              </span>
+              <span class="flow-progress-label flow-progress-label-finish">Фініш</span>
+            </div>
             <div class="flow-track" role="list">
               <button
                 class="flow-step is-active"
                 type="button"
                 role="listitem"
                 aria-pressed="true"
-                data-step-title="Заявка"
-                data-step-text="Ваші побажання, строки й бюджет одразу задають напрям пошуку."
+                data-step-title="Заявка і перша зустріч"
+                data-step-text="Приймаємо запит, знайомимось, уточнюємо задачу й одразу окреслюємо, як саме будемо рухатись далі."
+                data-step-progress="14%"
               >
                 <span class="flow-number">01</span>
                 <span class="flow-node" aria-hidden="true"></span>
-                <span class="flow-title">Заявка</span>
+                <span class="flow-title">Заявка і перша зустріч</span>
               </button>
               <button
                 class="flow-step"
                 type="button"
                 role="listitem"
                 aria-pressed="false"
-                data-step-title="Пошук і шортлист"
-                data-step-text="Відсіюємо слабкі варіанти до того, як вони заберуть ваш час."
+                data-step-title="Підтвердження домовленості"
+                data-step-text="Погоджуємо формат співпраці, обсяг робіт, строки, бюджет і всі важливі деталі без сірих зон."
+                data-step-progress="46%"
               >
                 <span class="flow-number">02</span>
                 <span class="flow-node" aria-hidden="true"></span>
-                <span class="flow-title">Пошук і шортлист</span>
+                <span class="flow-title">Підтвердження домовленості</span>
               </button>
               <button
                 class="flow-step"
                 type="button"
                 role="listitem"
                 aria-pressed="false"
-                data-step-title="Перевірка"
-                data-step-text="Авто, документи, продавець і ризики перевіряються до покупки."
+                data-step-title="Виконання робіт"
+                data-step-text="Переходимо до практичної частини: підбору, перевірки, супроводу або навчання залежно від обраної послуги."
+                data-step-progress="76%"
               >
                 <span class="flow-number">03</span>
                 <span class="flow-node" aria-hidden="true"></span>
-                <span class="flow-title">Перевірка</span>
+                <span class="flow-title">Виконання робіт</span>
               </button>
               <button
                 class="flow-step"
                 type="button"
                 role="listitem"
                 aria-pressed="false"
-                data-step-title="Передача авто"
-                data-step-text="Доставка, оплата й документи доводяться до спокійної передачі авто."
+                data-step-title="Виконане замовлення"
+                data-step-text="Фіналізуємо результат, передаємо виконану роботу й закриваємо замовлення спокійно та прозоро."
+                data-step-progress="102%"
               >
                 <span class="flow-number">04</span>
                 <span class="flow-node" aria-hidden="true"></span>
-                <span class="flow-title">Передача авто</span>
+                <span class="flow-title">Виконане замовлення</span>
               </button>
             </div>
             <article class="flow-detail" aria-live="polite">
-              <span class="detail-kicker">Активний крок</span>
-              <h3>Заявка</h3>
-              <p>Ваші побажання, строки й бюджет одразу задають напрям пошуку.</p>
+              <span class="detail-kicker">Поточний етап</span>
+              <h3>Заявка і перша зустріч</h3>
+              <p>Приймаємо запит, знайомимось, уточнюємо задачу й одразу окреслюємо, як саме будемо рухатись далі.</p>
             </article>
           </div>
         </div>
