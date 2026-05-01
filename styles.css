@@ -218,8 +218,10 @@ textarea {
   top: calc(100% + 0.55rem);
   right: 0;
   display: grid;
-  width: 12rem;
-  padding: 0.45rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  width: min(24rem, calc(100vw - 1.4rem));
+  padding: 0.8rem;
   opacity: 0;
   pointer-events: none;
   transform: translateY(-0.7rem);
@@ -232,6 +234,20 @@ textarea {
   transform: translateY(0);
 }
 
+.menu-group {
+  display: grid;
+  align-content: start;
+  gap: 0.2rem;
+}
+
+.menu-group-title {
+  margin: 0 0 0.2rem;
+  color: var(--accent-dark);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .menu-panel a {
   border-radius: 6px;
   padding: 0.75rem 0.85rem;
@@ -240,7 +256,8 @@ textarea {
 }
 
 .menu-panel a:hover,
-.menu-panel a:focus-visible {
+.menu-panel a:focus-visible,
+.menu-panel a[aria-current="page"] {
   background: rgba(201, 30, 43, 0.1);
   color: var(--accent-dark);
   outline: 0;
@@ -912,6 +929,216 @@ p {
   font-weight: 800;
 }
 
+.script-note {
+  font-family: "Segoe Script", "Lucida Handwriting", "Brush Script MT", cursive;
+  font-weight: 700;
+}
+
+.biography-page {
+  background:
+    radial-gradient(circle at 14% 12%, rgba(255, 252, 244, 0.96), transparent 22rem),
+    radial-gradient(circle at 86% 18%, rgba(191, 31, 45, 0.08), transparent 18rem),
+    linear-gradient(135deg, #f7f0e1 0%, #ede1cf 48%, #f7f3ea 100%);
+}
+
+.biography-page::before {
+  background-image:
+    linear-gradient(rgba(115, 90, 58, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 100% 2.2rem, 58px 58px;
+  mask-image: none;
+  opacity: 0.82;
+}
+
+.bio-main {
+  padding-top: 7.5rem;
+}
+
+.bio-hero {
+  padding: 3rem 0 4rem;
+}
+
+.bio-hero-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 25rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+}
+
+.bio-portrait-wrap {
+  position: relative;
+  padding: 1rem;
+  border: 1px solid rgba(126, 94, 56, 0.18);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(255, 251, 245, 0.92), rgba(247, 239, 225, 0.88));
+  box-shadow: 0 18px 34px rgba(104, 78, 49, 0.16);
+  transform: rotate(-1.2deg);
+}
+
+.bio-portrait-wrap::before,
+.bio-portrait-wrap::after {
+  position: absolute;
+  top: -0.7rem;
+  width: 4.5rem;
+  height: 1.1rem;
+  content: "";
+  background: linear-gradient(180deg, rgba(214, 197, 164, 0.8), rgba(194, 173, 138, 0.42));
+  opacity: 0.7;
+}
+
+.bio-portrait-wrap::before {
+  left: 1rem;
+  transform: rotate(-5deg);
+}
+
+.bio-portrait-wrap::after {
+  right: 1rem;
+  transform: rotate(4deg);
+}
+
+.bio-portrait {
+  aspect-ratio: 4 / 5;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0)), #ece7de;
+  overflow: hidden;
+}
+
+.bio-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bio-caption {
+  margin-top: 0.9rem;
+  color: #755736;
+  font-size: 1rem;
+}
+
+.bio-title {
+  max-width: 11ch;
+}
+
+.bio-subtitle {
+  max-width: 45rem;
+  margin-bottom: 1.2rem;
+  color: #5f564c;
+  font-size: 1.16rem;
+}
+
+.bio-intro-note {
+  max-width: 42rem;
+  margin-bottom: 0;
+  color: #7a5a34;
+  font-size: 1.18rem;
+}
+
+.bio-paper-section {
+  padding: 0 0 4.5rem;
+}
+
+.journal-sheet {
+  position: relative;
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border: 1px solid rgba(126, 94, 56, 0.16);
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 244, 0.98), rgba(245, 236, 220, 0.96)),
+    repeating-linear-gradient(180deg, transparent 0 2rem, rgba(151, 124, 89, 0.12) 2rem 2.06rem);
+  box-shadow: 0 26px 48px rgba(104, 78, 49, 0.14);
+}
+
+.journal-sheet::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: clamp(1.1rem, 3vw, 1.8rem);
+  width: 2px;
+  content: "";
+  background: linear-gradient(180deg, rgba(191, 31, 45, 0.18), rgba(191, 31, 45, 0.08));
+}
+
+.journal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(18rem, 0.9fr);
+  gap: clamp(1.4rem, 3vw, 2.4rem);
+  align-items: start;
+}
+
+.journal-column {
+  display: grid;
+  gap: 1rem;
+}
+
+.bio-meta-list,
+.bio-highlights,
+.bio-milestones {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.bio-meta-item,
+.bio-highlight,
+.bio-milestone {
+  padding-left: 1.1rem;
+  border-left: 3px solid rgba(191, 31, 45, 0.2);
+}
+
+.bio-meta-item strong,
+.bio-highlight strong,
+.bio-milestone strong {
+  color: #6e1d25;
+}
+
+.bio-side-note,
+.bio-quote {
+  padding: 1rem 1rem 1rem 1.1rem;
+  border: 1px dashed rgba(126, 94, 56, 0.26);
+  border-radius: 6px;
+  background: rgba(255, 250, 241, 0.72);
+}
+
+.bio-side-note h3,
+.bio-quote h3 {
+  color: #5d4630;
+}
+
+.bio-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.bio-stat {
+  padding: 1rem;
+  border: 1px solid rgba(126, 94, 56, 0.16);
+  border-radius: 6px;
+  background: rgba(255, 252, 246, 0.86);
+  box-shadow: 0 10px 24px rgba(104, 78, 49, 0.1);
+}
+
+.bio-stat strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #6e1d25;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.bio-closing {
+  display: grid;
+  gap: 1rem;
+}
+
+.bio-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .sticky-cta {
   right: clamp(0.8rem, 2.2vw, 1.5rem);
   bottom: clamp(0.8rem, 2.2vw, 1.5rem);
@@ -1059,6 +1286,11 @@ p {
     padding-left: 0;
   }
 
+  .menu-panel {
+    grid-template-columns: 1fr;
+    width: min(18rem, calc(100vw - 1rem));
+  }
+
   .flow-progress {
     grid-template-columns: 1fr;
     gap: 0.45rem;
@@ -1114,6 +1346,12 @@ p {
 
   .process-grid,
   .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bio-hero-layout,
+  .journal-grid,
+  .bio-stats {
     grid-template-columns: 1fr;
   }
 

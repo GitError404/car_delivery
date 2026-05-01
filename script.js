@@ -63,6 +63,7 @@ let firstInteractionHandled = false;
 let processInteractionHandled = false;
 
 function setAvatarFrame(row, column) {
+  if (!avatarPerson) return;
   const x = column * (100 / (spriteColumns - 1));
   const y = row * (100 / (spriteRows - 1));
   avatarPerson.style.backgroundPosition = `${x}% ${y}%`;
@@ -76,10 +77,13 @@ function setAvatarState(state) {
   stopAvatarSequence();
   const [row, column] = avatarFrames[state] || avatarFrames.default;
   setAvatarFrame(row, column);
-  avatarPerson.dataset.state = state;
+  if (avatarPerson) {
+    avatarPerson.dataset.state = state;
+  }
 }
 
 function playAvatarSequence(name, frameDuration = 150) {
+  if (!avatarPerson) return;
   const frames = avatarSequences[name];
   if (!frames || !frames.length) {
     setAvatarState(name);
@@ -118,7 +122,9 @@ function nodAvatarOnce() {
 }
 
 window.addEventListener("load", () => {
-  playAvatarSequence("wave", 120);
+  if (avatarPerson) {
+    playAvatarSequence("wave", 120);
+  }
 });
 
 document.addEventListener(
@@ -139,35 +145,39 @@ document.addEventListener("keydown", (event) => {
 });
 
 function closeMenu() {
+  if (!cornerMenu || !menuToggle) return;
   cornerMenu.classList.remove("is-open");
   menuToggle.setAttribute("aria-expanded", "false");
 }
 
-menuToggle.addEventListener("click", () => {
-  const isOpen = cornerMenu.classList.toggle("is-open");
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-});
+if (cornerMenu && menuToggle && menuPanel) {
+  menuToggle.addEventListener("click", () => {
+    const isOpen = cornerMenu.classList.toggle("is-open");
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+  });
 
-document.addEventListener("click", (event) => {
-  if (!cornerMenu.contains(event.target)) {
-    closeMenu();
-  }
-});
+  document.addEventListener("click", (event) => {
+    if (!cornerMenu.contains(event.target)) {
+      closeMenu();
+    }
+  });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closeMenu();
-    menuToggle.focus();
-  }
-});
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenu();
+      menuToggle.focus();
+    }
+  });
 
-menuPanel.addEventListener("click", (event) => {
-  if (event.target.matches("a")) {
-    closeMenu();
-  }
-});
+  menuPanel.addEventListener("click", (event) => {
+    if (event.target.closest("a")) {
+      closeMenu();
+    }
+  });
+}
 
 function getSlides() {
+  if (!carousel) return [];
   return [...carousel.querySelectorAll(".service-card")];
 }
 
@@ -218,13 +228,16 @@ sliderDots.forEach((dot) => {
   });
 });
 
-carousel.addEventListener("scroll", () => {
-  window.requestAnimationFrame(updateSliderDots);
-});
+if (carousel) {
+  carousel.addEventListener("scroll", () => {
+    window.requestAnimationFrame(updateSliderDots);
+  });
 
-window.addEventListener("resize", updateSliderDots);
+  window.addEventListener("resize", updateSliderDots);
+}
 
 function activateStep(step) {
+  if (!flowDetail) return;
   flowSteps.forEach((item) => {
     const isActive = item === step;
     item.classList.toggle("is-active", isActive);
@@ -261,13 +274,15 @@ flowSteps.forEach((step) => {
   });
 });
 
-contactForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const formData = new FormData(contactForm);
-  const name = String(formData.get("name") || "").trim();
-  formStatus.textContent = name
-    ? `Дякуємо, ${name}. Скоро зв'яжемося з вами.`
-    : "Дякуємо. Скоро зв'яжемося з вами.";
-  playAvatarSequence("ok", 160);
-  contactForm.reset();
-});
+if (contactForm && formStatus) {
+  contactForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(contactForm);
+    const name = String(formData.get("name") || "").trim();
+    formStatus.textContent = name
+      ? `Дякуємо, ${name}. Скоро зв'яжемося з вами.`
+      : "Дякуємо. Скоро зв'яжемося з вами.";
+    playAvatarSequence("ok", 160);
+    contactForm.reset();
+  });
+}
