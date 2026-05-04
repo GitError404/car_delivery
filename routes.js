@@ -15,6 +15,7 @@
     route: "all",
     category: "all",
     selectedId: places[0]?.id || null,
+    expandedId: null,
   };
 
   const routeOptions = ["all", ...new Set(places.map((place) => place.route))];
@@ -116,6 +117,28 @@
     }
   }
 
+  function toggleExpanded(placeId) {
+    state.expandedId = state.expandedId === placeId ? null : placeId;
+    syncExpandedCards();
+  }
+
+  function syncExpandedCards() {
+    listContainer.querySelectorAll(".routes-place-card").forEach((card) => {
+      const isExpanded = card.dataset.placeId === state.expandedId;
+      card.classList.toggle("is-expanded", isExpanded);
+      const toggle = card.querySelector(".routes-card-toggle");
+      const details = card.querySelector(".routes-place-details");
+      if (toggle) {
+        toggle.setAttribute("aria-expanded", String(isExpanded));
+        toggle.setAttribute("aria-label", isExpanded ? "Згорнути картку закладу" : "Розгорнути картку закладу");
+        toggle.innerHTML = isExpanded ? "×" : "+";
+      }
+      if (details) {
+        details.hidden = !isExpanded;
+      }
+    });
+  }
+
   function renderPlaces() {
     const visiblePlaces = getVisiblePlaces();
     const bounds = [];
@@ -126,6 +149,10 @@
 
     if (!visiblePlaces.some((place) => place.id === state.selectedId)) {
       state.selectedId = visiblePlaces[0]?.id || null;
+    }
+
+    if (!visiblePlaces.some((place) => place.id === state.expandedId)) {
+      state.expandedId = null;
     }
 
     if (!visiblePlaces.length) {
@@ -165,30 +192,45 @@
       if (place.id === state.selectedId) {
         card.classList.add("is-active");
       }
+      if (place.id === state.expandedId) {
+        card.classList.add("is-expanded");
+      }
 
       const tagsMarkup = place.tags
         .map((tag) => `<li class="routes-tag">${tag}</li>`)
         .join("");
+
+      const isExpanded = place.id === state.expandedId;
 
       card.innerHTML = `
         <div class="routes-place-top">
           <div>
             <p class="routes-place-route">${place.route} • ${place.km}</p>
             <h4>${place.name}</h4>
+            <p class="routes-place-city">${place.city}</p>
           </div>
-          <span class="routes-place-category">${place.category}</span>
+          <div class="routes-place-top-actions">
+            <span class="routes-place-category">${place.category}</span>
+            <button
+              type="button"
+              class="routes-card-toggle"
+              aria-expanded="${isExpanded ? "true" : "false"}"
+              aria-label="${isExpanded ? "Згорнути картку закладу" : "Розгорнути картку закладу"}"
+            >${isExpanded ? "×" : "+"}</button>
+          </div>
         </div>
-        <p class="routes-place-city">${place.city}</p>
-        <p>${place.description}</p>
-        <ul class="routes-tags">${tagsMarkup}</ul>
-        <p class="routes-place-accent">${place.accent}</p>
-        <dl class="routes-place-meta">
-          <div><dt>Адреса</dt><dd>${place.address}</dd></div>
-          <div><dt>Години</dt><dd>${place.hours}</dd></div>
-        </dl>
         <div class="routes-place-actions">
           <button type="button" class="button button-secondary routes-focus-button">Показати на карті</button>
           <a class="button button-primary" target="_blank" rel="noreferrer" href="https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lng}#map=15/${place.lat}/${place.lng}">Відкрити карту</a>
+        </div>
+        <div class="routes-place-details"${isExpanded ? "" : " hidden"}>
+          <p>${place.description}</p>
+          <ul class="routes-tags">${tagsMarkup}</ul>
+          <p class="routes-place-accent">${place.accent}</p>
+          <dl class="routes-place-meta">
+            <div><dt>Адреса</dt><dd>${place.address}</dd></div>
+            <div><dt>Години</dt><dd>${place.hours}</dd></div>
+          </dl>
         </div>
       `;
 
@@ -198,6 +240,11 @@
       });
 
       card.querySelector(".routes-focus-button").addEventListener("click", () => focusPlace(place));
+      card.querySelector(".routes-card-toggle").addEventListener("click", (event) => {
+        event.stopPropagation();
+        focusPlace(place, { skipPan: true, skipScroll: true });
+        toggleExpanded(place.id);
+      });
       listContainer.append(card);
     });
 
@@ -214,6 +261,8 @@
       const categoryText = state.category === "all" ? "усі формати" : state.category.toLowerCase();
       activeFilterLabel.textContent = `${routeText} • ${categoryText}`;
     }
+
+    syncExpandedCards();
   }
 
   renderFilters();

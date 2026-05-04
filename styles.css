@@ -1305,7 +1305,7 @@ p {
 }
 
 .routes-place-card {
-  padding: 1rem;
+  padding: 0.95rem;
   cursor: pointer;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1322,7 +1322,7 @@ p {
   align-items: start;
   justify-content: space-between;
   gap: 0.8rem;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.75rem;
 }
 
 .routes-place-route {
@@ -1331,6 +1331,16 @@ p {
   font-size: 0.76rem;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.routes-place-top h4 {
+  margin-bottom: 0.28rem;
+}
+
+.routes-place-top-actions {
+  display: grid;
+  justify-items: end;
+  gap: 0.55rem;
 }
 
 .routes-place-category {
@@ -1344,9 +1354,31 @@ p {
 }
 
 .routes-place-city {
-  margin-bottom: 0.55rem;
+  margin-bottom: 0;
   color: var(--ink);
   font-weight: 800;
+}
+
+.routes-card-toggle {
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid rgba(201, 30, 43, 0.22);
+  border-radius: 6px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--accent-dark);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.routes-card-toggle:hover,
+.routes-card-toggle:focus-visible {
+  border-color: rgba(201, 30, 43, 0.34);
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  outline: 0;
 }
 
 .routes-tags {
@@ -1398,6 +1430,22 @@ p {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+}
+
+.routes-place-details {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.9rem;
+  margin-top: 0.9rem;
+  border-top: 1px solid rgba(41, 45, 50, 0.08);
+}
+
+.routes-place-card:not(.is-expanded) .routes-place-details {
+  display: none;
+}
+
+.routes-place-card:not(.is-expanded) .routes-place-actions {
+  margin-bottom: 0;
 }
 
 .routes-place-actions .button {
