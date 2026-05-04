@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мапа трас | Підбір авто під ключ</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+  </head>
+  <body class="routes-page">
+    <a class="skip-link" href="#main">До основного вмісту</a>
+
+    <header class="corner-header" aria-label="Шапка сайту">
+      <aside class="avatar-block" aria-label="Асистент з підбору авто">
+        <div class="avatar-scene">
+          <div class="avatar-person" role="img" aria-label="Асистент з підбору авто"></div>
+        </div>
+      </aside>
+
+      <nav class="corner-menu" aria-label="Навігація сайтом">
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="anchor-menu">
+          <span>Меню</span>
+          <span class="menu-icon" aria-hidden="true"></span>
+        </button>
+        <div class="menu-panel" id="anchor-menu">
+          <div class="menu-group" aria-label="Якорі сторінки">
+            <p class="menu-group-title">Якорі</p>
+            <a href="#routes-hero">Початок</a>
+            <a href="#routes-map">Карта</a>
+            <a href="#routes-list">Заклади</a>
+            <a href="#routes-notes">Примітки</a>
+          </div>
+          <div class="menu-group" aria-label="Живі сторінки">
+            <p class="menu-group-title">Сторінки</p>
+            <a href="index.html">Головна сторінка</a>
+            <a href="biography.html">Біографія</a>
+            <a href="routes.html" aria-current="page">Мапа трас</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="routes-main">
+      <section class="routes-hero" id="routes-hero" aria-labelledby="routes-title">
+        <div class="section-inner routes-hero-layout">
+          <div class="routes-hero-copy">
+            <p class="eyebrow">Тестовий навігатор</p>
+            <h1 id="routes-title">Корисні зупинки по трасах.</h1>
+            <p class="routes-subtext">
+              MVP-сторінка для пошуку перевірених місць між містами: кава, їжа, короткий перепочинок, сімейна зупинка або
+              комфортна пауза в дорозі.
+            </p>
+            <div class="routes-summary">
+              <div class="routes-summary-item">
+                <strong id="routes-count">0</strong>
+                <span>місць у демо-наборі</span>
+              </div>
+              <div class="routes-summary-item">
+                <strong id="routes-route-count">0</strong>
+                <span>трас у вибірці</span>
+              </div>
+              <div class="routes-summary-item">
+                <strong>Live</strong>
+                <span>карта + список + фільтри</span>
+              </div>
+            </div>
+          </div>
+          <aside class="routes-hero-note">
+            <p class="script-note">Поки що це тестова версія: дивимось, як поводиться карта, список і сама логіка відбору.</p>
+            <p>
+              Далі можна буде вирішити, чи лишаємо ручне наповнення, чи переходимо до дорожчого стеку з зовнішніми сервісами.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="routes-workspace section-block" id="routes-map" aria-labelledby="routes-workspace-title">
+        <div class="section-inner">
+          <div class="routes-heading">
+            <div>
+              <p class="eyebrow">Маршрутний перегляд</p>
+              <h2 id="routes-workspace-title">Карта, фільтри й список місць в одному ритмі.</h2>
+            </div>
+          </div>
+
+          <div class="routes-filters" aria-label="Фільтри закладів">
+            <div class="routes-filter-group">
+              <span class="routes-filter-label">Траса</span>
+              <div class="routes-filter-options" id="route-filter-options"></div>
+            </div>
+            <div class="routes-filter-group">
+              <span class="routes-filter-label">Тип зупинки</span>
+              <div class="routes-filter-options" id="category-filter-options"></div>
+            </div>
+          </div>
+
+          <div class="routes-layout">
+            <div class="routes-map-shell">
+              <div class="routes-map-chrome">
+                <span>Тестова карта</span>
+                <span id="routes-active-filter">Усі напрямки</span>
+              </div>
+              <div id="routes-map-canvas" class="routes-map-canvas" role="img" aria-label="Інтерактивна карта трас і закладів"></div>
+            </div>
+
+            <section class="routes-list-panel" id="routes-list" aria-labelledby="routes-list-title">
+              <div class="routes-list-header">
+                <div>
+                  <p class="eyebrow">Підібрані зупинки</p>
+                  <h3 id="routes-list-title">Що є на вибраному шляху.</h3>
+                </div>
+                <p class="routes-list-meta" id="routes-results-meta">Показано 0 місць</p>
+              </div>
+              <div class="routes-list" id="routes-list-container"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block routes-notes" id="routes-notes" aria-labelledby="routes-notes-title">
+        <div class="section-inner routes-notes-layout">
+          <div>
+            <p class="eyebrow">Що тут тестуємо</p>
+            <h2 id="routes-notes-title">Що ми зможемо покращити в наступній версії.</h2>
+          </div>
+          <div class="routes-notes-grid">
+            <article class="routes-note">
+              <h3>Дані</h3>
+              <p>Зараз місця живуть у локальному наборі. Потім можна перейти до ручної адмінки або зовнішнього джерела.</p>
+            </article>
+            <article class="routes-note">
+              <h3>Карта</h3>
+              <p>На MVP дивимось, чи вистачає безкоштовного рендеру й чи добре працює сам маршрутний сценарій.</p>
+            </article>
+            <article class="routes-note">
+              <h3>Інтерактивність</h3>
+              <p>Перевіряємо, чи людям зручніше починати з карти, зі списку або з фільтрів по трасі.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="routes-data.js"></script>
+    <script src="routes.js"></script>
+  </body>
+</html>
