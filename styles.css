@@ -1144,7 +1144,27 @@ p {
 }
 
 .routes-hero {
+  position: relative;
   padding: 2.6rem 0 2rem;
+  overflow: hidden;
+}
+
+.routes-hero-image {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(238, 240, 242, 0.98) 0%, rgba(238, 240, 242, 0.86) 42%, rgba(238, 240, 242, 0.42) 100%),
+    linear-gradient(180deg, rgba(248, 249, 250, 0.22), rgba(223, 227, 231, 0.2)),
+    url("assets/routes-hero-road.png") center center / cover;
+}
+
+.routes-hero-image::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 36%;
+  content: "";
+  background: linear-gradient(to bottom, transparent, var(--bg));
 }
 
 .routes-hero-layout {
@@ -1247,7 +1267,7 @@ p {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.9fr);
   gap: 1.2rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .routes-map-shell,
@@ -1258,6 +1278,11 @@ p {
   box-shadow: var(--soft-shadow);
   backdrop-filter: blur(18px);
   overflow: hidden;
+}
+
+.routes-map-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .routes-map-chrome,
@@ -1278,14 +1303,14 @@ p {
 }
 
 .routes-map-canvas {
-  min-height: 36rem;
+  min-height: 0;
   background: linear-gradient(180deg, rgba(232, 236, 240, 0.9), rgba(216, 223, 229, 0.9));
 }
 
 .routes-list-panel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  min-height: 42rem;
+  min-height: 0;
 }
 
 .routes-list-header {
@@ -1302,6 +1327,14 @@ p {
   gap: 0.9rem;
   padding: 1rem;
   overflow: auto;
+  min-height: 0;
+}
+
+@media (min-width: 981px) {
+  .routes-map-shell,
+  .routes-list-panel {
+    height: 42rem;
+  }
 }
 
 .routes-place-card {
